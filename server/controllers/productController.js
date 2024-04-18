@@ -1,10 +1,10 @@
 import productModel from "../models/product-model.js";
 import categoryModel from "../models/category-model.js";
-import Order from "../models/order-model.js";
+//import Order from "../models/order-model.js";
 
 import fs from "fs";
 import slugify from "slugify";
-import Stripe from 'stripe';
+
 
 import dotenv from "dotenv";
 
@@ -323,61 +323,5 @@ export const productCategoryController = async (req, res) => {
   }
 };
 
-const stripe = new Stripe(process.env.SECRET_KEY, {
-  apiVersion: '2023-10-16',
-});
 
-// Stripe Payment Controller
-// Stripe Payment Controller
-export const stripePaymentController = async (req, res) => {
-  try {
-    const { products, userId, paymentIntentId, returnUrl } = req.body;
 
-    // Prepare line items for Stripe checkout session
-    const lineItems = products.map((product) => ({
-      price_data: {
-        currency: "inr",
-        product_data: {
-          name: product.name,
-          images: [product.imgdata],
-        },
-        unit_amount: product.price * 100,
-      },
-      quantity: product.qnty,
-    }));
-
-    // Create a new order
-    const order = new Order({
-      cart: products.map((product) => ({
-        productId: product.productId,
-        price: product.price,
-        quantity: product.qnty,
-      })),
-      userId: userId,
-      paymentIntentId: paymentIntentId,
-      returnUrl: returnUrl,
-    });
-
-    // Save the order to the database
-    await order.save();
-
-    // Create a new Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: lineItems,
-      mode: "payment",
-      success_url: returnUrl,
-      cancel_url: "http://localhost:5173", // You may want to customize this
-    });
-
-    // Return the session ID to the client
-    res.json({ id: session.id });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      error: error.message,
-      message: "Error in processing payment",
-    });
-  }
-};

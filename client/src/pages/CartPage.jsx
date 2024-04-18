@@ -101,8 +101,9 @@ function CartPage() {
                 };
 
                 const result = await axios.post("http://localhost:8000/api/razopay/success", data);
+                console.log(result);
 
-                alert(result.data.msg);
+                alert(result.msg);
             },
             prefill: {
                 name: auth?.user,
@@ -128,10 +129,6 @@ function CartPage() {
         alert("Error occurred while fetching order data. Please try again later.");
     }
 }
-
-
-
- 
 
   return (
     <Layout>
@@ -181,7 +178,7 @@ function CartPage() {
                 <h4 className="font-bold text-xl mt-4">Total: {totalPrice()} </h4>
                 <div>
                   <h2>Payment Form</h2>
-                  <button className="App-link" onClick={displayRazorpay}>
+                  <button className="App-link bg-orange-500 text-white rounded-md p-3 shadow-2xl" onClick={displayRazorpay}>
                     Pay {totalPrice()}
                   </button>
                 </div>

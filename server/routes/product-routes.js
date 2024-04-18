@@ -12,7 +12,7 @@ import {
   productPhotoController,
   realtedProductController,
   searchProductController,
-  stripePaymentController, //stripe
+ 
   updateProductController,
 } from "../controllers/productController.js";
 import { isAdmin, requiredSignIn } from "../middlewares/auth-middleware.js";
