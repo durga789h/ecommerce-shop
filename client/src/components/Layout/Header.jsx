@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { FaBuilding } from "react-icons/fa";
+import { FaBuilding, FaBars, FaTimes } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/auth';
 import SearchInput from "../Form/SearchInput";
 import { useCart } from "../../context/card";
-import { Badge } from "antd";
-import { Select } from "antd";
-const { Option } = Select;
+import { Badge, Select } from "antd";
 import axios from 'axios';
 import "./Header.css";
 
+const { Option } = Select;
+
 export default function Header() {
   const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState("");
   const { auth, setAuth } = useAuth();
   const [cart] = useCart();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     setAuth({
@@ -30,7 +30,6 @@ export default function Header() {
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get("http://localhost:8000/api/v1/category/get-category");
-      console.log(data)
       if (data?.success) {
         setCategories(data?.category);
       }
@@ -45,43 +44,45 @@ export default function Header() {
   }, []);
 
   return (
-    <nav className="bg-orange-400">
+    <nav className="bg-gradient-to-br from-fuchsia-700 to-blue-700">
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-between items-center flex-col lg:flex-row">
-        <div className="flex items-center">
+          <div className="flex items-center justify-between w-full lg:w-auto">
+            <Link to="/" className="navbar-brand flex items-center text-white lg:hidden">
+              <FaBuilding className="mr-2" /> Ecommerce App
+            </Link>
+            <button className="text-white focus:outline-none lg:hidden" onClick={() => setMenuOpen(!menuOpen)}>
+              {menuOpen ? <FaTimes /> : <FaBars />}
+            </button>
+          </div>
+          <div className="hidden lg:flex items-center">
             <Link to="/" className="navbar-brand flex items-center text-white">
               <FaBuilding className="mr-2" /> Ecommerce App
             </Link>
-          <SearchInput />
+            <SearchInput className="ml-4" />
           </div>
-          <ul className="flex justify-center lg:justify-end items-center space-x-4 mt-4 lg:mt-0">
-            <li>
-              <NavLink to="/" className="text-white">
+          <ul className={`flex-col  lg:flex lg:flex-row lg:items-center lg:space-x-4 space-y-4 lg:space-y-0 mt-4 lg:mt-0 ${menuOpen ? 'flex' : 'hidden'} w-full lg:w-auto`}>
+            <li className="w-full lg:w-auto">
+              <NavLink to="/" className="block text-center text-white">
                 Home
               </NavLink>
             </li>
-            <li>
-              <Link className="relative text-white" to={"/categories"}>
-
-              <div className="text-white cursor-pointer">
+            <li className="w-full lg:w-auto">
+              <div className="block text-center text-white">
                 Categories
               </div>
-              </Link>
-              
-              <Select 
-                className='w-full'
+              <Select
+                className='w-full lg:w-auto mt-2 lg:mt-0'
                 defaultValue="Select a category"
                 style={{ width: 200 }}
                 onChange={(value) => {
-                  setCategory(value);
-                  // Redirect to the selected category page using react-router-dom
-                  // Example: history.push(`/category/${value}`);
+                  // handle category selection
                 }}
               >
                 {categories.map((c) => (
-                  <Option key={c._id} value={c._id}>
-                    <Link className="text-center" to={`/category/${c.slug}`}>
-                      {c.name}
+                  <Option key={c._id} value={c._id}  style={{TextDecoder:"none"}}>
+                    <Link to={`/category/${c.slug}`}>
+                      {c.name} 
                     </Link>
                   </Option>
                 ))}
@@ -89,27 +90,31 @@ export default function Header() {
             </li>
             {!auth?.user ? (
               <>
-                <li className="w-full mb-2">
-                  <NavLink to="/register" className="text-white">
+                <li className="w-full lg:w-auto">
+                  <NavLink to="/register" className="block text-center text-white">
                     Register
                   </NavLink>
                 </li>
-                <li className="w-full mb-2">
-                  <NavLink to="/login" className="text-white">
+                <li className="w-full lg:w-auto">
+                  <NavLink to="/login" className="block text-center text-white">
                     Login
                   </NavLink>
                 </li>
               </>
             ) : (
-              <div className="w-full mb-2">
-                <NavLink className="text-white" role="button" style={{ border: "none" }}>
+              <li className="w-full lg:w-auto">
+                <div className="block text-center text-white">
                   {auth?.user?.name}
-                </NavLink>
-                <Select className='w-full' defaultValue="Select a dashboard" style={{ width: 200 }}>
-                  <Option value="dashboard" >
-                    <NavLink to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}>
+                </div>
+                <Select
+                  className='w-full lg:w-auto mt-2 lg:mt-0'
+                  defaultValue="Select an option"
+                  style={{ width: 200 }}
+                >
+                  <Option value="dashboard">
+                    <Link to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}>
                       Dashboard
-                    </NavLink>
+                    </Link>
                   </Option>
                   <Option value="logout">
                     <NavLink onClick={handleLogout} to="/login">
@@ -117,19 +122,18 @@ export default function Header() {
                     </NavLink>
                   </Option>
                 </Select>
-              </div>
+              </li>
             )}
-            <li className="w-full mt-2">
-              <NavLink to="/cart" className="text-white">
+            <li className="w-full lg:w-auto">
+              <NavLink to="/cart" className="block text-center text-white">
                 <Badge count={cart?.length} showZero offset={[10, -5]}>
                   Cart
                 </Badge>
               </NavLink>
             </li>
           </ul>
-          </div>
         </div>
-    
+      </div>
     </nav>
   );
 }

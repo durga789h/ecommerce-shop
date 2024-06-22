@@ -2,8 +2,10 @@ import React from "react";
 import Layout from "../components/Layout/Layout";
 import { useSearch } from "../context/search";
 
+
 const Search = () => {
   const {search, setSearch} = useSearch();
+ 
   console.log(search)
 
   return (

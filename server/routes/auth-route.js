@@ -1,6 +1,10 @@
 import express from 'express';
 const router=express.Router();
-import {registercontroller,logincontroller,testcontroller,forgotPasswordController, updateProfileController, getOrdersController, getAllOrdersController, orderStatusController, getuser, deleteUserById, updateUserById, getUserById,} from '../controllers/authcontroller.js'
+import {registercontroller,logincontroller,
+  testcontroller,forgotPasswordController,
+   updateProfileController, getOrdersController, getAllOrdersController,
+    orderStatusController, getuser, deleteUserById,
+     updateUserById, getUserById,} from '../controllers/authcontroller.js'
 import { isAdmin, requiredSignIn } from '../middlewares/auth-middleware.js'
 
 router.post("/register",registercontroller)
@@ -11,6 +15,7 @@ router.get("/user/data/:id",requiredSignIn,isAdmin,getUserById); //for single us
 router.delete("/user/data/delete/:id",requiredSignIn,isAdmin,deleteUserById)
 
 router.put("/user/data/update/:id",requiredSignIn,isAdmin,updateUserById)
+
 router.get("/user-auth",requiredSignIn,(req,res)=>{
     res.status(200).send({
         ok:true

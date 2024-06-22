@@ -22,7 +22,7 @@ const CreateProduct = () => {
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get("http://localhost:8000/api/v1/category/get-category");
-      console.log(data)
+      console.log(data);
       if (data?.success) {
         setCategories(data?.category);
       }
@@ -46,11 +46,12 @@ const CreateProduct = () => {
       productData.append("quantity", quantity);
       productData.append("photo", photo);
       productData.append("category", category);
+      productData.append("shipping", shipping); // Add shipping to FormData
       const { data } = await axios.post(
         "http://localhost:8000/api/v1/product/create-product",
         productData
-      ); // Added 'await' here
-      console.log(data)
+      );
+      console.log(data);
       if (data?.success) {
         toast.error(data?.message);
       } else {
@@ -62,42 +63,40 @@ const CreateProduct = () => {
       toast.error("Something went wrong");
     }
   };
-  
 
   return (
     <Layout title={"Dashboard - Create Product"}>
-      <div className="container mx-auto px-4 py-8">
-        <div className="lg:flex">
+      <div className="container mx-auto px-4 py-8 lg:px-0">
+        <div className="lg:flex justify-center">
           <div className="lg:w-1/4">
             <AdminMenu />
           </div>
-          <div className="lg:w-3/4">
+          <div className="lg:w-3/4 lg:px-4">
             <h1 className="text-2xl font-bold mb-4 text-center lg:text-left">Create Product</h1>
-            <div className="lg:w-3/4 mx-auto">
+            <div className="lg:w-3/4 mx-auto p-3">
               <Select
-                variant={false}
                 placeholder="Select a category"
                 size="large"
                 showSearch
-                className="form-select mb-3"
+                className="form-select mb-3 w-full"
                 onChange={(value) => {
                   setCategory(value);
                 }}
               >
-                {categories?.map((c,i) => (
+                {categories?.map((c, i) => (
                   <Option key={i} value={c._id}>
                     {c.name}
                   </Option>
                 ))}
               </Select>
-              <div className="mb-4">
-                <label className="btn btn-outline-secondary col-md-12 bg-amber-500 p-5 text-center">
+              <div className="mb-7 mt-3">
+                <label className="btn rounded-full w-full cursor-pointer  btn-outline-secondary col-md-12 bg-amber-500 p-5 text-center hover:bg-red-500 hover:text-white">
                   {photo ? photo.name : "Upload Photo"}
                   <input
                     type="file"
                     name="photo"
                     accept="image/*"
-                    
+                    className=""
                     onChange={(e) => setPhoto(e.target.files[0])}
                     hidden
                   />
@@ -115,31 +114,31 @@ const CreateProduct = () => {
                   </div>
                 )}
               </div>
-              <div className="mb-3 mt-3">
+              <div className="mb-3 mt-5">
                 <input
                   type="text"
                   value={name}
-                  placeholder="write a name"
-                  className="form-control"
+                  placeholder="Product Name"
+                  className="form-control p-3 border border-orange-500 rounded-full w-full"
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div className="mb-3">
                 <textarea
-                  type="text"
                   value={description}
-                  placeholder="write a description"
-                  className="form-control"
+                  placeholder="Product Description"
+                  rows={10}
+                  cols={8}
+                  className="form-control p-3 border border-orange-500  w-full"
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-
               <div className="mb-3">
                 <input
                   type="number"
                   value={price}
-                  placeholder="write a Price"
-                  className="form-control"
+                  placeholder="Product Price"
+                  className="form-control p-3 border border-orange-500 rounded-full w-full"
                   onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
@@ -147,15 +146,14 @@ const CreateProduct = () => {
                 <input
                   type="number"
                   value={quantity}
-                  placeholder="write a quantity"
-                  className="form-control"
+                  placeholder="Product Quantity"
+                  className="form-control p-3 border border-orange-500 rounded-full w-full"
                   onChange={(e) => setQuantity(e.target.value)}
                 />
               </div>
               <div className="mb-3">
                 <Select
-                  variant={false}
-                  placeholder="Select Shipping "
+                  placeholder="Select Shipping"
                   size="large"
                   showSearch
                   className="form-select mb-3"
@@ -168,7 +166,10 @@ const CreateProduct = () => {
                 </Select>
               </div>
               <div className="mb-3">
-                <button className="btn btn-primary bg-green-400 text-white rounded p-4" onClick={handleCreate}>
+                <button
+                  className="btn btn-primary bg-green-400 text-white rounded p-4 hover:bg-red-500 hover:text-white"
+                  onClick={handleCreate}
+                >
                   CREATE PRODUCT
                 </button>
               </div>

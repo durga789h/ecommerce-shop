@@ -1,11 +1,11 @@
-import React, {useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AdminMenu from "../../components/Layout/AdminMenu";
 import Layout from "../../components/Layout/Layout";
 import { useAuth } from "../../context/auth";
 import { Link } from "react-router-dom";
 
 const Users = () => {
-  const { auth} = useAuth();
+  const { auth } = useAuth();
   const [newupdatedata, setNewupdatedata] = useState([]);
 
   const getUsers = async () => {
@@ -14,23 +14,22 @@ const Users = () => {
         method: "GET",
         headers: {
           Authorization: auth?.token,
-        }
+        },
       });
       if (res.ok) {
         const data = await res.json();
-        console.log(data);
         setNewupdatedata(data.users);
       } else {
-        // Handle error response
-        console.error('Error:', res.status);
+        console.error("Error:", res.status);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
+
   useEffect(() => {
     getUsers();
-  }, []); //
+  }, [auth?.token]); // Fetch users when auth token changes
 
   const deleteUser = async (id) => {
     try {
@@ -46,70 +45,57 @@ const Users = () => {
 
       if (response.ok) {
         const data = await response.json();
-        getUsers(data);
+        getUsers(); // Refresh user list after deletion
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-console.log(newupdatedata);
   return (
     <Layout title={"Dashboard - All Users"}>
-      <div className="container mx-auto px-4 py-8 text-center">
-        <div className="lg:flex">
-          <div className="lg:w-1/4">
-            <AdminMenu />
-          </div>
-          <div className="lg:w-3/4">
-           
-            <h1 className="text-center text-2xl">All Users</h1>
-            <table className="center border">
-          <thead className="boder">
-            <tr className="border">
-              <th className="w-1/2 sm:w-1/5 py-2">name</th>
-              <th  className="w-full sm:w-1/5 py-2">Email</th>
-              <th className="sm:table-cell py-2">Phone</th>
-              <th  className=" sm:table-cell w-1/5 py-2">Address</th>
-              <th>Update</th>
-              <th >Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-          {newupdatedata.map((value,i)=>(
-    <tr key={i}>
-        <td  className="py-2">{value.name}</td>
-        <td  className="py-2">{value.email}</td>
-        <td className="border text-center px-4">{value.phone}</td>
-        <td className="border text-cente px-4">{value.address}</td>
-        <td className="border  bg-orange-500 rounded-md p-2 border-spacing-6">
-                  <Link
-                    to={`/dashboard/admin/users/${value._id}/edit`}
-                    className="text-white hover:underlinep-3 mt-3"
-                  >
-                    Edit
-                  </Link>
-                </td>
-                <td className=" border text-center bg-red-600 text-white rounded-md p-2">
-                  <span
-                    className=" cursor-pointer hover:underline"
-                    onClick={() => deleteUser(value._id)}
-                  >
-                    Delete
-                  </span>
-                </td>
-        
-    </tr>
-))}
-
-      
-          </tbody>
-        </table>
-             
-        
-           
-        
+      <div className="bg-gradient-br from-fuchsia-600 to-blue-600 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+          <div className="lg:flex">
+            <div className="lg:w-1/4">
+              <AdminMenu />
+            </div>
+            <div className="lg:w-3/4">
+              <h1 className="text-center lg:text-left text-2xl mb-4 text-white">
+                All Users
+              </h1>
+              <div className="shadow-md rounded-lg overflow-hidden bg-white">
+                <div className="overflow-x-auto">
+                  {/* Conditionally apply flex and flex-wrap classes for horizontal table on mobile */}
+                  <div className="flex flex-wrap">
+                    {newupdatedata.map((value, i) => (
+                      <div key={i} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
+                        <div className="border rounded-lg p-4 text-white bg-gradient-to-br from-blue-700 to-fuchsia-700">
+                          <h2 className="text-lg font-bold mb-2">{value.name}</h2>
+                          <p className="text-sm mb-1">{value.email}</p>
+                          <p className="text-sm mb-1">{value.phone}</p>
+                          <p className="text-sm mb-1">{value.address}</p>
+                          <div className="flex justify-center mt-2">
+                            <Link
+                              to={`/dashboard/admin/users/${value._id}/edit`}
+                              className="bg-red-600  hover:text-orange-700 hover:underline text-white py-1 px-4 rounded-md mr-2"
+                            >
+                              Edit
+                            </Link>
+                            <span
+                              className="text-white cursor-pointer hover:text-red-700 hover:underline bg-red-600 py-1 px-4 rounded-md"
+                              onClick={() => deleteUser(value._id)}
+                            >
+                              Delete
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

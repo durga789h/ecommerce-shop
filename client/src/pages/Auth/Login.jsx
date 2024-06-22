@@ -6,8 +6,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../../pages/page.css';
 import { useAuth } from '../../context/auth';
 
-
-
 export default function Login() {
   const {auth,setAuth}=useAuth();
   const navigate=useNavigate();
@@ -81,6 +79,7 @@ export default function Login() {
               <p><Link to={"/register"} className='text-black underline'>don't have account then click here</Link></p>
               <input type="button" onClick={handleReset} value="Reset" className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded cursor-pointer" />
             </div>
+
           </form>
         
         </div>
@@ -88,3 +87,6 @@ export default function Login() {
     </div>
   );
 }
+
+
+

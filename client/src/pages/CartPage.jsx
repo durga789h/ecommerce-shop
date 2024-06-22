@@ -3,25 +3,23 @@ import Layout from "../components/Layout/Layout";
 import { useCart } from "../context/card";
 import { useAuth } from "../context/auth";
 import { useNavigate } from "react-router-dom";
-import logo from '../../public/images/s3.png';
+import logo from "../../public/images/s3.png";
 import axios from "axios";
-import {toast} from 'react-toastify';
+import { toast } from "react-toastify";
 
 function loadScript(src) {
   return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = () => {
-          resolve(true);
-      };
-      script.onerror = () => {
-          resolve(false);
-      };
-      document.body.appendChild(script);
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => {
+      resolve(true);
+    };
+    script.onerror = () => {
+      resolve(false);
+    };
+    document.body.appendChild(script);
   });
 }
-
-
 
 function CartPage() {
   const { auth } = useAuth();
@@ -29,15 +27,14 @@ function CartPage() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  let totals
+  let totals;
   // Total price calculation
   const totalPrice = () => {
     let total = 0;
     cart?.forEach((item) => {
-      total += item.price ; // Multiply price by quantity
+      total += item.price; // Multiply price by quantity
     });
-    console.log(total,">>>><M,,,,")
-    totals=total;
+    totals = total;
     return total.toLocaleString("en-US", {
       style: "currency",
       currency: "INR",
@@ -52,83 +49,94 @@ function CartPage() {
   };
 
   async function displayRazorpay() {
-    const res = await loadScript(
-        "https://checkout.razorpay.com/v1/checkout.js"
-    );
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
 
     if (!res) {
-        alert("Razorpay SDK failed to load. Are you online?");
-        return;
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
     }
 
     try {
-        // Fetch Razorpay token from your backend
-        const tokenResponse = await axios.post("http://localhost:8000/api/razopay/token", {
+      // Fetch Razorpay token from your backend
+      const tokenResponse = await axios.post(
+        "http://localhost:8000/api/razopay/token",
+        {
           total: totals,
-      }, {
+        },
+        {
           headers: {
-              Authorization: auth?.token
-          }
-      });
-        const { token, id: orderId, amount} = tokenResponse.data;
+            Authorization: auth?.token,
+          },
+        }
+      );
+      const { token, id: orderId, amount } = tokenResponse.data;
 
-        // Fetch order data from your backend
-        const orderResponse = await axios.post("http://localhost:8000/api/razopay/payment", {
-            token: token,
-            cart: cart,// Pass the cart data to the backend for order calculation
-        }, {
-            headers: {
-                Authorization: auth?.token
-            }
-        });
+      // Fetch order data from your backend
+      const orderResponse = await axios.post(
+        "http://localhost:8000/api/razopay/payment",
+        {
+          token: token,
+          cart: cart, // Pass the cart data to the backend for order calculation
+        },
+        {
+          headers: {
+            Authorization: auth?.token,
+          },
+        }
+      );
 
-        const {  currency } = orderResponse.data;
+      const { currency } = orderResponse.data;
 
-        const options = {
-            key: "rzp_test_8lsXcf8nMk9KPG", // Enter the Key ID generated from the Dashboard
-            amount:amount ,
-            currency: currency,
-            name: auth?.user,
-            description: "Test Transaction",
-            image: { logo },
-            order_id: orderId,
-            handler: async function (response) {
-                const data = {
-                    orderCreationId: orderId,
-                    razorpayPaymentId: response.razorpay_payment_id,
-                    razorpayOrderId: response.razorpay_order_id,
-                    razorpaySignature: response.razorpay_signature,
-                };
+      const options = {
+        key: "rzp_test_HnzxB0hd1z7X8B", // Enter the Key ID generated from the Dashboard
+        amount: amount,
+        currency: currency,
+        name: auth?.user,
+        description: "Test Transaction",
+        image: { logo },
+        order_id: orderId,
+        handler: async function (response) {
+          const data = {
+            orderCreationId: orderId,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
+          };
 
-                const result = await axios.post("http://localhost:8000/api/razopay/success", data);
-                console.log(result);
+          const result = await axios.post(
+            "http://localhost:8000/api/razopay/success",
+            data
+          );
+          console.log(result);
 
-                alert(result.msg);
-            },
-            prefill: {
-                name: auth?.user,
-                email: "SoumyaDey@example.com",
-                contact: "9999999999",
-            },
-            notes: {
-                address: "Soumya Dey Corporate Office",
-            },
-            theme: {
-                color: "#61dafb",
-            },
-        };
+          alert(result.msg);
+        },
+        prefill: {
+          name: auth?.user,
+          email: "SoumyaDey@example.com",
+          contact: "9999999999",
+        },
+        notes: {
+          address: "Soumya Dey Corporate Office",
+        },
+        theme: {
+          color: "#61dafb",
+        },
+      };
 
-        const paymentObject = new window.Razorpay(options);
-        paymentObject.open();
-        localStorage.removeItem("cart");
-        setCart([]);
-        navigate("/dashboard/user/orders");
-        toast.success("Payment Completed Successfully ");
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+      localStorage.removeItem("cart");
+      setCart([]);
+      navigate("/dashboard/user/orders");
+      toast.success("Payment Completed Successfully ");
     } catch (error) {
-        console.log(error);
-        alert("Error occurred while fetching order data. Please try again later.");
+      console.log(error);
+      alert(
+        "Error occurred while fetching order data. Please try again later."
+      );
     }
-}
+  }
 
   return (
     <Layout>
@@ -148,21 +156,26 @@ function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
               {cart?.map((p, i) => (
-                <div className="flex items-center border-b pb-4 mb-4" key={i}>
+                <div
+                  className="flex flex-col lg:flex-row items-center border-b pb-4 mb-4"
+                  key={i}
+                >
                   <img
                     src={`http://localhost:8000/api/v1/product/product-photo/${p._id}`}
-                    className="w-24 h-24 object-cover mr-4"
+                    className="w-24 h-24 object-cover lg:mr-4 mb-4 lg:mb-0"
                     alt={p.name}
                   />
-                  <div>
+                  <div className="lg:flex-1 lg:mr-4">
                     <p className="font-bold">{p.name}</p>
                     {p.description && (
-                      <p className="text-gray-500">{p.description.substring(0, 30)}</p>
+                      <p className="text-gray-500">
+                        {p.description.substring(0, 30)}
+                      </p>
                     )}
                     <p>Price: {p.price}</p>
                   </div>
                   <button
-                    className="ml-auto bg-red-500 text-white px-4 py-2 rounded"
+                    className="lg:ml-auto bg-red-500 text-white px-4 py-2 rounded mt-4 lg:mt-0"
                     onClick={() => removeCartItem(p._id)}
                   >
                     Remove
@@ -176,9 +189,12 @@ function CartPage() {
                 <p className="mb-4">Total | Checkout | Payment</p>
                 <hr />
                 <h4 className="font-bold text-xl mt-4">Total: {totalPrice()} </h4>
-                <div>
+                <div className="text-center mt-4">
                   <h2>Payment Form</h2>
-                  <button className="App-link bg-orange-500 text-white rounded-md p-3 shadow-2xl" onClick={displayRazorpay}>
+                  <button
+                    className="App-link bg-orange-500 text-white rounded-md p-3 shadow-2xl"
+                    onClick={displayRazorpay}
+                  >
                     Pay {totalPrice()}
                   </button>
                 </div>

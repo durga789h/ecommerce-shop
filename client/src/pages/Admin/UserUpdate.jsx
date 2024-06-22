@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { toast } from "react-toastify";
 
@@ -75,6 +75,7 @@ const AdminUpdate = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
                     <h1 className="text-2xl font-bold mb-4">Update User Data</h1>
+                    <button className="bg-blue-600 p-3 rounded-full mt-3 w-full mb-4 text-white"><Link to={"/admin"}>Previous</Link></button>
                     <form onSubmit={handleSubmit}>
                         <input type="text" name="name" value={data.name} onChange={handleChange} placeholder="Name" className="block w-full mb-4 border-gray-300 rounded-md p-2" />
                         <input type="email" name="email" value={data.email} onChange={handleChange} placeholder="Email" className="block w-full mb-4 border-gray-300 rounded-md p-2" />
@@ -87,6 +88,7 @@ const AdminUpdate = () => {
                     <img src="https://thumbs.dreamstime.com/b/social-media-stay-connected-concept-people-using-81499037.jpg" alt="contact" className="w-full h-auto" />
                 </div>
             </div>
+            <button className="bg-blue-600 p-3 rounded-full mt-3 w-full text-white"><Link to={"/admin"}>Previous</Link></button>
         </div>
     );
 };

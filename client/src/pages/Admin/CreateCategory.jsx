@@ -93,28 +93,28 @@ const CreateCategory = () => {
           </div>
           <div className="lg:w-3/4">
             <h1 className="text-center text-2xl font-bold mb-4">Manage Category</h1>
-            <div className="p-3 lg:w-1/2 mx-auto">
+            <div className="lg:w-1/2 mx-auto mb-4">
               <CategoryForm
                 handleSubmit={handleSubmit}
                 value={name}
                 setValue={setName}
               />
             </div>
-            <div className="w-full overflow-x-auto">
+            <div className="overflow-x-auto">
               <table className="table-auto w-full">
                 <thead>
                   <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Actions</th>
+                    <th className="px-4 py-2">Name</th>
+                    <th className="px-4 py-2">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {categories?.map((c,i) => (
-                    <tr key={i} className="text-center">
-                      <td>{c.name}</td>
-                      <td>
+                <tbody className="text-white">
+                  {categories?.map((c, i) => (
+                    <tr key={i} className="text-center ">
+                      <td className="px-4 py-2 bg-gradient-to-br  from-fuchsia-600 to-blue-700 hover:bg-red-500 cursor-pointer">{c.name}</td>
+                      <td className="px-4 py-2">
                         <button
-                          className="btn btn-primary ms-2 bg-blue-700 text-white rounded p-3"
+                          className="btn btn-primary bg-blue-700 text-white rounded p-2 mr-2 hover:bg-blue-600"
                           onClick={() => {
                             setVisible(true);
                             setUpdatedName(c.name);
@@ -124,7 +124,7 @@ const CreateCategory = () => {
                           Edit
                         </button>
                         <button
-                          className="btn btn-danger ms-2  bg-red-700 text-white rounded p-3"
+                          className="btn btn-danger bg-red-700 text-white rounded p-2 hover:bg-red-600"
                           onClick={() => {
                             handleDelete(c._id);
                           }}

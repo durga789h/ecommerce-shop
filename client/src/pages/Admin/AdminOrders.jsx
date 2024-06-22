@@ -49,66 +49,60 @@ const AdminOrders = () => {
   
   return (
     <Layout title={"All Orders Data"}>
-      <div className="flex flex-col lg:flex-row">
-        <div className="lg:w-1/4">
-          <AdminMenu />
-        </div>
-        <div className="lg:w-3/4 px-4 py-2">
-          <h1 className="text-center text-2xl lg:text-3xl font-bold mb-4">All Orders</h1>
-          {orders?.map((o, i) => (
-            <div className="border shadow mb-4 overflow-x-auto" key={i}>
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2">Status</th>
-                    <th className="px-4 py-2">Buyer</th>
-                    <th className="px-4 py-2">Date</th>
-                    <th className="px-4 py-2">Payment</th>
-                    <th className="px-4 py-2">Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="px-4 py-2">
-                      <Select
-                        variant={false}
-                        onChange={(value) => handleChange(o._id, value)}
-                        defaultValue={o?.status}
-                      >
-                        {status.map((s, i) => (
-                          <Option key={i} value={s}>
-                            {s}
-                          </Option>
-                        ))}
-                      </Select>
-                    </td>
-                    <td className="px-4 py-2">{o?.buyer?.name}</td>
-                    <td className="px-4 py-2">{moment(o?.createdAt).fromNow()}</td>
-                   
-                    <td className="px-4 py-2">{o?.products?.length}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
-                {o?.products?.map((p, i) => (
-                  <div className="border p-4" key={i}>
-                    <img
-                      src={`http://localhost:8000/api/v1/product/product-photo/${p._id}`}
-                      alt={p.name}
-                      className="w-full h-32 object-cover mb-2"
-                    />
-                    <p className="text-lg font-bold">{p.name}</p>
-                   { /*<p>{p.description.substring(0, 30)}</p>*/}
-                    <p>Price: {p.price}</p>
-                  </div>
-                ))}
+    <div className="flex flex-col lg:flex-row">
+      <div className="lg:w-1/4">
+        <AdminMenu />
+      </div>
+      <div className="lg:w-3/4 px-4 py-2">
+        <h1 className="text-center text-2xl lg:text-3xl font-bold mb-4">All Orders</h1>
+        {orders?.map((o, i) => (
+          <div className="border shadow mb-4" key={i}>
+            <div className="p-4">
+              <div className="mb-4">
+                <strong>Status:</strong>{" "}
+                <Select
+                  onChange={(value) => handleChange(o._id, value)}
+                  defaultValue={o?.status}
+                  className="w-full"
+                >
+                  {status.map((s, i) => (
+                    <Option key={i} value={s}>
+                      {s}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+              <div className="mb-4">
+                <strong>Buyer:</strong> {o?.buyer?.name}
+              </div>
+              <div className="mb-4">
+                <strong>Date:</strong>{" "}
+                {moment(o?.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
+              </div>
+              <div className="mb-4">
+                <strong>Products Count:</strong> {o?.products?.length}
               </div>
             </div>
-          ))}
-        </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
+              {o?.products?.map((p, i) => (
+                <div className="border p-4" key={i}>
+                  <img
+                    src={`http://localhost:8000/api/v1/product/product-photo/${p._id}`}
+                    alt={p.name}
+                    className="w-full h-32 object-cover mb-2"
+                  />
+                  <p className="text-lg font-bold">{p.name}</p>
+                  <p>Price: {p.price}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
-    </Layout>
-  );
+    </div>
+  </Layout>
+);
 };
+
 
 export default AdminOrders;

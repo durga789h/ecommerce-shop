@@ -1,6 +1,6 @@
 import Razorpay from "razorpay";
 import Order from "../models/order-model.js";
-import productModel from "../models/product-model.js";
+//import productModel from "../models/product-model.js";
 
 
 
@@ -17,20 +17,7 @@ export const razorpayTokenController = async (req, res) => {
     
      let totalAmount = req.body.total;
      console.log(">>>>>>>>>>>>>",req.body)
-    // const perPage = 6;
-    // const page = req.params.page ? req.params.page : 1;
-    // const products = await productModel
-    //   .find({})
-    //   .select("price")
-    //   .skip((page - 1) * perPage)
-    //   .limit(perPage)
-    //   .sort({ createdAt: -1 });
-
-    // // Calculate total amount
-    // let totalAmount = 0;
-    // for (const product of products) {
-    //   totalAmount += product.price;
-    // }
+   
 
     // Ensure total amount is at least INR 1.00
     if (totalAmount < 1) {

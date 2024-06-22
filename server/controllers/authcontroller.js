@@ -140,8 +140,6 @@ export const forgotPasswordController = async (req, res) => {
     }
   };
   
-  
-  
   //update profile
   export const updateProfileController = async (req, res) => {
     try {
@@ -164,7 +162,7 @@ export const forgotPasswordController = async (req, res) => {
       );
       res.status(200).send({
         success: true,
-        message: "Profile Updated SUccessfully",
+        message: "Profile Updated Successfully",
         updatedUser,
       });
     } catch (error) {
@@ -214,7 +212,7 @@ export const orderStatusController = async (req, res) => {
     }
 };
 
-//alluser
+//alluser admin
  const getuser = async (req, res) => {
     try {
       const users = await userModel.find({});
